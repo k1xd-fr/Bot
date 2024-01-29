@@ -1,0 +1,20 @@
+{
+	"name": "metalabs-2",
+	"version": "1.0.0",
+	"description": "My tg-Bot",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"start:dev": "nodemon index.js"
+	},
+	"author": "MetaLabs Test",
+	"license": "ISC",
+	"dependencies": {
+		"axios": "^1.6.5",
+		"dotenv": "^16.4.1",
+		"node-telegram-bot-api": "^0.64.0"
+	},
+	"devDependencies": {
+		"nodemon": "^3.0.3"
+	}
+}
