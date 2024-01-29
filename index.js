@@ -40,9 +40,7 @@ bot.onText(/\/getForms/, async (msg) => {
 
 		bot.sendMessage(
 			chatID,
-			`Анкеты:\n\n ${
-				formattedForms === '' ? 'Не кто не отправлял заявку ' : formattedForms
-			}`
+			`Анкеты:\n\n ${formattedForms === '' ? 'Не было заявок' : formattedForms}`
 		)
 	} catch (error) {
 		console.error('Ошибка при получении контактов:', error.message)
