@@ -5,36 +5,32 @@ const token = process.env.TELEGRAM_BOT_TOKEN
 const secretKey = process.env.SECRET_KEY
 const bot = new TelegramApi(token, { polling: true })
 
-let tokenForData = {
-	key: '',
-	timestamp: null,
-}
-
-const TOKEN_EXPIRATION_DURATION = 24 * 60 * 60 * 1000
+let tokenForData
 
 bot.onText(/\/setToken/, (msg) => {
 	const chatID = msg.chat.id
 	bot.sendMessage(chatID, 'Введите секретный ключ')
 	bot.once('text', (secretKeyInput) => {
-		tokenForData.key = secretKeyInput.text
-		tokenForData.timestamp = new Date()
+		tokenForData = secretKeyInput.text
 		bot.sendMessage(chatID, 'Секретный ключ сохранен.')
 	})
 })
+bot.onText(/\/delToken/, (msg) => {
+	const chatID = msg.chat.id
 
+	tokenForData = null
+	bot.sendMessage(chatID, 'ваш секретный ключ удален.')
+})
 bot.onText(/\/getForms/, async (msg) => {
 	const chatID = msg.chat.id
-	if (!isTokenValid()) {
-		bot.sendMessage(
-			chatID,
-			'Вы не ввели секретный ключ или срок его действия истек.'
-		)
+	if (!tokenForData) {
+		bot.sendMessage(chatID, 'Вы не ввели секретный ключ.')
 		return
 	}
 
 	try {
 		const response = await axios.get('http://localhost:3000/api/telegramBot', {
-			params: { access_token: tokenForData.key },
+			params: { access_token: tokenForData },
 		})
 
 		const forms = response.data
@@ -56,14 +52,3 @@ bot.onText(/\/getForms/, async (msg) => {
 		)
 	}
 })
-
-function isTokenValid() {
-	if (!tokenForData.key || !tokenForData.timestamp) {
-		return false
-	}
-
-	const currentTime = new Date()
-	const elapsedTime = currentTime - tokenForData.timestamp
-
-	return elapsedTime <= TOKEN_EXPIRATION_DURATION
-}
